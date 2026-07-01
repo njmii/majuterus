@@ -24,6 +24,19 @@ function makeId() {
   return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
 }
 
+/* ---------- Assignees (in-house team vs. subcontractors) ---------- */
+
+const ASSIGNEES = [
+  { id: "in_house", label: "In House" },
+  { id: "sub_marvel", label: "Sub Marvel" },
+  { id: "sub_peter", label: "Sub Peter" },
+];
+
+function getAssigneeLabel(id) {
+  const found = ASSIGNEES.find((a) => a.id === id);
+  return found ? found.label : "In House";
+}
+
 function escapeHtml(value) {
   return String(value)
     .replace(/&/g, "&amp;")
@@ -129,6 +142,7 @@ function createJob(input) {
     laborCost: Number(input.laborCost) || 0,
     discount: Number(input.discount) || 0,
     status: input.status || "scheduled",
+    assignedTo: input.assignedTo || "in_house",
     createdAt: new Date().toISOString(),
     updatedAt: new Date().toISOString(),
   };
@@ -165,6 +179,7 @@ function updateJobById(id, input) {
     discount:
       input.discount !== undefined ? Number(input.discount) : existing.discount,
     status: input.status ?? existing.status,
+    assignedTo: input.assignedTo ?? existing.assignedTo ?? "in_house",
     updatedAt: new Date().toISOString(),
   };
   saveJobs(jobs);
@@ -231,4 +246,90 @@ function formatDayLabel(date) {
 
 function formatMoney(n) {
   return `RM ${Number(n || 0).toFixed(2)}`;
+}
+
+function formatFullDate(date) {
+  return date.toLocaleDateString("en-GB", {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+}
+
+/* ---------- Sharing (native share sheet, with clipboard fallback) ---------- */
+
+function buildDaySchedulePlainText(dateKey, assigneeId) {
+  const jobs = listJobsInRange(dateKey, dateKey).filter(
+    (j) => (j.assignedTo || "in_house") === assigneeId
+  );
+  const dateObj = new Date(`${dateKey}T00:00:00`);
+  const label = getAssigneeLabel(assigneeId);
+  const lines = jobs.map((j, i) => {
+    const time = j.jobTime ? `${j.jobTime} — ` : "";
+    const desc = j.description ? ` (${j.description})` : "";
+    return `${i + 1}. ${time}${j.customer.name} — ${j.customer.phone} — ${j.customer.address}${desc}`;
+  });
+  return {
+    jobs,
+    text: [
+      `Schedule for ${formatFullDate(dateObj)} — ${label}`,
+      "",
+      lines.length ? lines.join("\n") : "No jobs scheduled.",
+      "",
+      `Total jobs: ${jobs.length}`,
+    ].join("\n"),
+  };
+}
+
+async function copyTextToClipboard(text) {
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.opacity = "0";
+  document.body.appendChild(textarea);
+  textarea.select();
+  document.execCommand("copy");
+  document.body.removeChild(textarea);
+}
+
+function showToast(message) {
+  let toast = document.getElementById("mt-toast");
+  if (!toast) {
+    toast = document.createElement("div");
+    toast.id = "mt-toast";
+    toast.className = "toast";
+    document.body.appendChild(toast);
+  }
+  toast.textContent = message;
+  toast.classList.add("visible");
+  clearTimeout(toast._hideTimer);
+  toast._hideTimer = setTimeout(() => toast.classList.remove("visible"), 2500);
+}
+
+async function shareDaySchedule(dateKey, assigneeId) {
+  const { jobs, text } = buildDaySchedulePlainText(dateKey, assigneeId);
+  if (jobs.length === 0) return;
+  const label = getAssigneeLabel(assigneeId);
+
+  if (navigator.share) {
+    try {
+      await navigator.share({ title: `Schedule — ${label}`, text });
+      return;
+    } catch (err) {
+      if (err && err.name === "AbortError") return;
+      // fall through to clipboard fallback
+    }
+  }
+
+  try {
+    await copyTextToClipboard(text);
+    showToast(`${label}'s schedule copied to clipboard.`);
+  } catch {
+    showToast("Could not share or copy the schedule.");
+  }
 }
