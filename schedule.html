@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Schedule — Maju Terus Aircond Service</title>
+  <link rel="icon" href="assets/logo.jpg" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="assets/logo.jpg" alt="Maju Terus Aircond Service logo" /></span>
+        <span class="brand-text">
+          <span class="brand-name">MAJU TERUS</span>
+          <span class="brand-sub">Aircond Service</span>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="schedule.html" class="active">Schedule</a>
+        <a href="customers.html">Customers</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container page">
+    <div class="page-head">
+      <div>
+        <h1>Schedule</h1>
+        <p class="muted">
+          Drag a job card to move it to another day, or reorder within a day.
+          On touch devices without drag support, use Edit to change the date.
+        </p>
+      </div>
+      <div class="week-nav">
+        <button class="btn btn-secondary" id="prev-week-btn">&larr; Prev</button>
+        <button class="btn btn-secondary" id="this-week-btn">This week</button>
+        <button class="btn btn-secondary" id="next-week-btn">Next &rarr;</button>
+      </div>
+    </div>
+    <p id="week-summary"></p>
+
+    <div class="board" id="board"></div>
+  </main>
+
+  <footer class="site-footer">
+    Data is stored only in this browser (localStorage) — it does not sync between devices.
+  </footer>
+
+  <div class="modal-backdrop" id="job-modal-backdrop" hidden>
+    <form class="modal modal-wide" id="job-form">
+      <h2 id="job-modal-title">Add job to schedule</h2>
+
+      <div class="field">
+        <label>Customer</label>
+        <div id="customer-picker"></div>
+      </div>
+
+      <div class="field-row">
+        <label class="field">
+          Date
+          <input type="date" required class="input" id="job-date" />
+        </label>
+        <label class="field">
+          Time (optional)
+          <input type="time" class="input" id="job-time" />
+        </label>
+      </div>
+
+      <label class="field">
+        Job description (optional)
+        <input class="input" id="job-description" placeholder="e.g. Split unit gas top-up" />
+      </label>
+
+      <div class="field-row field-row-3">
+        <label class="field">
+          Part cost (RM)
+          <input type="number" min="0" step="0.01" class="input" id="job-part-cost" value="0" />
+        </label>
+        <label class="field">
+          Labor cost (RM)
+          <input type="number" min="0" step="0.01" class="input" id="job-labor-cost" value="0" />
+        </label>
+        <label class="field">
+          Discount (RM)
+          <input type="number" min="0" step="0.01" class="input" id="job-discount" value="0" />
+        </label>
+      </div>
+
+      <div class="totals-row">
+        <span>Subtotal: <span id="job-subtotal">RM 0.00</span></span>
+        <span class="totals-strong">Total: <span id="job-total">RM 0.00</span></span>
+      </div>
+
+      <label class="field" id="job-status-field" hidden>
+        Status
+        <select class="input" id="job-status">
+          <option value="scheduled">Scheduled</option>
+          <option value="in_progress">In progress</option>
+          <option value="done">Done</option>
+          <option value="cancelled">Cancelled</option>
+        </select>
+      </label>
+
+      <p class="error-text" id="job-error" hidden></p>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="job-cancel-btn">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save job</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-backdrop" id="confirm-modal-backdrop" hidden>
+    <div class="modal">
+      <h2>Delete job?</h2>
+      <p class="muted" id="confirm-message"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="confirm-cancel-btn">Cancel</button>
+        <button class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/schedule.js"></script>
+</body>
+</html>
