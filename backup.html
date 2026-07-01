@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Backup — Maju Terus Aircond Service</title>
+  <link rel="icon" href="assets/logo.jpg" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="assets/logo.jpg" alt="Maju Terus Aircond Service logo" /></span>
+        <span class="brand-text">
+          <span class="brand-name">MAJU TERUS</span>
+          <span class="brand-sub">Aircond Service</span>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="schedule.html">Schedule</a>
+        <a href="day.html">Day View</a>
+        <a href="customers.html">Customers</a>
+        <a href="backup.html" class="active">Backup</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container page">
+    <div class="page-head">
+      <div>
+        <h1>Backup &amp; Transfer</h1>
+        <p class="muted">
+          Data is stored only on this device. Export it here, then import
+          that file on another device (e.g. your phone) to bring it along.
+        </p>
+      </div>
+    </div>
+
+    <div class="backup-grid">
+      <section class="day-panel">
+        <div class="day-panel-header">
+          <div>
+            <h2 class="day-panel-title">Export</h2>
+            <p class="day-panel-meta" id="export-summary"></p>
+          </div>
+        </div>
+        <div class="day-panel-body">
+          <p class="muted">
+            Download a backup file containing every customer and scheduled
+            job on this device.
+          </p>
+          <button class="btn btn-primary" id="export-btn">Download backup</button>
+        </div>
+      </section>
+
+      <section class="day-panel">
+        <div class="day-panel-header">
+          <div>
+            <h2 class="day-panel-title">Import</h2>
+            <p class="day-panel-meta">Load a backup file on this device</p>
+          </div>
+        </div>
+        <div class="day-panel-body">
+          <p class="muted">
+            Choose a backup file exported from another device.
+            <strong>This replaces</strong> all customers and jobs currently
+            stored on this device.
+          </p>
+          <input type="file" accept="application/json,.json" class="input" id="import-file-input" />
+          <button class="btn btn-primary" id="import-btn" disabled>Import backup</button>
+          <p class="error-text" id="import-error" hidden></p>
+        </div>
+      </section>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    Data is stored only in this browser (localStorage) — it does not sync between devices.
+  </footer>
+
+  <div class="modal-backdrop" id="import-confirm-backdrop" hidden>
+    <div class="modal">
+      <h2>Replace all data on this device?</h2>
+      <p class="muted" id="import-confirm-message"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="import-confirm-cancel-btn">Cancel</button>
+        <button class="btn btn-danger" id="import-confirm-proceed-btn">Replace data</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/backup.js"></script>
+</body>
+</html>

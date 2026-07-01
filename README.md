@@ -23,12 +23,18 @@ the browser and can be hosted for free with GitHub Pages.
   side — useful when a day has many jobs across different people and the
   compact weekly columns get crowded. Jump to it from any day's "View
   day →" link on the Schedule page.
+- **Backup** (`backup.html`): export all customers and jobs to a JSON file,
+  and import that file on another device — this is how you move data from
+  one browser/device to another (e.g. computer → phone), since there's no
+  shared backend.
 
 ## Data storage
 
 All data (customers and jobs) is stored in the browser's `localStorage`.
 There is no shared backend, so data does **not** sync between devices or
-browsers — each device keeps its own local copy.
+browsers automatically — each device keeps its own local copy. Use the
+Backup page to export a JSON file from one device and import it on
+another.
 
 ## Running locally
 
