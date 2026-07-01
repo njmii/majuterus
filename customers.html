@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Customers — Maju Terus Aircond Service</title>
+  <link rel="icon" href="assets/logo.jpg" />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="index.html">
+        <span class="brand-logo"><img src="assets/logo.jpg" alt="Maju Terus Aircond Service logo" /></span>
+        <span class="brand-text">
+          <span class="brand-name">MAJU TERUS</span>
+          <span class="brand-sub">Aircond Service</span>
+        </span>
+      </a>
+      <nav class="nav">
+        <a href="schedule.html">Schedule</a>
+        <a href="customers.html" class="active">Customers</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container page">
+    <div class="page-head">
+      <div>
+        <h1>Customers</h1>
+        <p class="muted">Name, telephone number, and address for each customer.</p>
+      </div>
+      <button class="btn btn-primary" id="add-customer-btn">+ Add customer</button>
+    </div>
+
+    <input class="input search-input" id="search-input" placeholder="Search by name, phone, or address..." />
+
+    <div class="table-wrap">
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Phone</th>
+            <th>Address</th>
+            <th class="text-right">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="customers-tbody"></tbody>
+      </table>
+      <p id="empty-state" class="empty-state" hidden>No customers found.</p>
+    </div>
+  </main>
+
+  <footer class="site-footer">
+    Data is stored only in this browser (localStorage) — it does not sync between devices.
+  </footer>
+
+  <div class="modal-backdrop" id="customer-modal-backdrop" hidden>
+    <form class="modal" id="customer-form">
+      <h2 id="customer-modal-title">Add customer</h2>
+
+      <label class="field">
+        Customer name
+        <input required id="customer-name" class="input" placeholder="e.g. Ahmad bin Ali" />
+      </label>
+      <label class="field">
+        Telephone number
+        <input required id="customer-phone" class="input" placeholder="e.g. 012-3456789" />
+      </label>
+      <label class="field">
+        Address
+        <textarea required id="customer-address" class="input textarea" placeholder="Full service address"></textarea>
+      </label>
+
+      <p class="error-text" id="customer-error" hidden></p>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" id="customer-cancel-btn">Cancel</button>
+        <button type="submit" class="btn btn-primary">Save</button>
+      </div>
+    </form>
+  </div>
+
+  <div class="modal-backdrop" id="confirm-modal-backdrop" hidden>
+    <div class="modal">
+      <h2>Delete customer?</h2>
+      <p class="muted" id="confirm-message"></p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" id="confirm-cancel-btn">Cancel</button>
+        <button class="btn btn-danger" id="confirm-delete-btn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/customers.js"></script>
+</body>
+</html>
