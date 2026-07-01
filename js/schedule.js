@@ -255,7 +255,7 @@ function updateJobTotals() {
   document.getElementById("job-total").textContent = formatMoney(total);
 }
 
-function renderCustomerPicker(query) {
+function renderCustomerPicker() {
   const el = document.getElementById("customer-picker");
 
   if (selectedCustomer && !newCustomerMode) {
@@ -292,47 +292,61 @@ function renderCustomerPicker(query) {
       newCustomerMode = false;
       renderCustomerPicker();
     });
+    document.getElementById("new-customer-name").focus();
     return;
   }
 
-  const matches = query && query.trim() ? listCustomers(query).slice(0, 6) : [];
-
+  // Search mode: build the input once and never replace it while the user is
+  // typing — earlier this rebuilt the whole box (and refocused it) on every
+  // keystroke, which visibly stalled typing on many browsers/devices.
   el.innerHTML = `
     <div class="customer-search-wrap">
-      <input class="input" id="customer-query" placeholder="Search by name or phone..." value="${escapeHtml(query || "")}" />
-      ${
-        matches.length
-          ? `<ul class="customer-matches">${matches
-              .map(
-                (c) => `
-              <li><button type="button" data-id="${c.id}">
-                <strong>${escapeHtml(c.name)}</strong> ${escapeHtml(c.phone)}
-              </button></li>`
-              )
-              .join("")}</ul>`
-          : ""
-      }
-      <button type="button" class="link-btn" id="new-customer-btn" style="margin-top: 0.35rem;">
-        + New customer
-      </button>
+      <div class="customer-search-row">
+        <input class="input" id="customer-query" placeholder="Search by name or phone..." autocomplete="off" />
+        <button type="button" class="link-btn new-customer-btn" id="new-customer-btn">+ New customer</button>
+      </div>
+      <ul class="customer-matches" id="customer-matches-list" hidden></ul>
     </div>
   `;
 
   const queryInput = document.getElementById("customer-query");
-  queryInput.addEventListener("input", () => renderCustomerPicker(queryInput.value));
+  queryInput.addEventListener("input", () => updateCustomerMatches(queryInput.value));
   queryInput.focus();
-  queryInput.setSelectionRange(queryInput.value.length, queryInput.value.length);
-
-  el.querySelectorAll(".customer-matches button").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      selectedCustomer = getCustomer(btn.dataset.id);
-      renderCustomerPicker();
-    });
-  });
 
   document.getElementById("new-customer-btn").addEventListener("click", () => {
     newCustomerMode = true;
     renderCustomerPicker();
+  });
+}
+
+function updateCustomerMatches(query) {
+  const list = document.getElementById("customer-matches-list");
+  if (!list) return;
+
+  const q = (query || "").trim();
+  const matches = q ? listCustomers(q).slice(0, 6) : [];
+
+  if (matches.length === 0) {
+    list.hidden = true;
+    list.innerHTML = "";
+    return;
+  }
+
+  list.hidden = false;
+  list.innerHTML = matches
+    .map(
+      (c) => `
+        <li><button type="button" data-id="${c.id}">
+          <strong>${escapeHtml(c.name)}</strong> ${escapeHtml(c.phone)}
+        </button></li>`
+    )
+    .join("");
+
+  list.querySelectorAll("button").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      selectedCustomer = getCustomer(btn.dataset.id);
+      renderCustomerPicker();
+    });
   });
 }
 

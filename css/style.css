@@ -484,8 +484,26 @@ a {
   position: relative;
 }
 
+.customer-search-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.customer-search-row .input {
+  flex: 1;
+  min-width: 0;
+}
+
+.new-customer-btn {
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
 .customer-matches {
   position: absolute;
+  top: 100%;
+  left: 0;
   z-index: 10;
   margin-top: 0.25rem;
   width: 100%;
