@@ -1,0 +1,48 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f3efda;
+  --foreground: #14282e;
+
+  --brand-navy: #14282e;
+  --brand-navy-light: #1f3b44;
+  --brand-blue: #8fc1e8;
+  --brand-blue-dark: #4f87b8;
+  --brand-cream: #f3efda;
+  --brand-cream-dark: #e6dfc2;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-brand-navy: var(--brand-navy);
+  --color-brand-navy-light: var(--brand-navy-light);
+  --color-brand-blue: var(--brand-blue);
+  --color-brand-blue-dark: var(--brand-blue-dark);
+  --color-brand-cream: var(--brand-cream);
+  --color-brand-cream-dark: var(--brand-cream-dark);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+@layer components {
+  .input {
+    border-radius: 0.5rem;
+    border: 1px solid var(--brand-cream-dark);
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 400;
+    color: var(--brand-navy);
+    background: white;
+  }
+  .input:focus {
+    outline: 2px solid var(--brand-blue);
+    outline-offset: 1px;
+  }
+}
