@@ -14,8 +14,10 @@ the browser and can be hosted for free with GitHub Pages.
   within a day, to rearrange the schedule — changes save automatically.
 - **Assignment**: each job is assigned to In House, Sub Marvel, or Sub
   Peter. Every day column has a "Share" chip per assignee (showing their
-  job count for that day) that shares just their jobs — using the phone's
-  native share sheet where available, or copying the text otherwise.
+  job count for that day) that generates a PDF of just their jobs for the
+  day (customer, phone, address, time, notes — no pricing) and shares it
+  via the phone's native share sheet where available, or downloads it
+  otherwise.
 
 ## Data storage
 

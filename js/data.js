@@ -257,44 +257,91 @@ function formatFullDate(date) {
   });
 }
 
-/* ---------- Sharing (native share sheet, with clipboard fallback) ---------- */
+/* ---------- Sharing (PDF, via the native share sheet or a download) ---------- */
 
-function buildDaySchedulePlainText(dateKey, assigneeId) {
+function buildDaySchedulePdfBlob(dateKey, assigneeId) {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF({ unit: "pt", format: "a4" });
   const jobs = listJobsInRange(dateKey, dateKey).filter(
     (j) => (j.assignedTo || "in_house") === assigneeId
   );
   const dateObj = new Date(`${dateKey}T00:00:00`);
   const label = getAssigneeLabel(assigneeId);
-  const lines = jobs.map((j, i) => {
-    const time = j.jobTime ? `${j.jobTime} — ` : "";
-    const desc = j.description ? ` (${j.description})` : "";
-    return `${i + 1}. ${time}${j.customer.name} — ${j.customer.phone} — ${j.customer.address}${desc}`;
-  });
-  return {
-    jobs,
-    text: [
-      `Schedule for ${formatFullDate(dateObj)} — ${label}`,
-      "",
-      lines.length ? lines.join("\n") : "No jobs scheduled.",
-      "",
-      `Total jobs: ${jobs.length}`,
-    ].join("\n"),
-  };
+  const marginX = 40;
+  const pageBottom = 780;
+  const textWidth = 480;
+  let y = 50;
+
+  doc.setFont("helvetica", "bold");
+  doc.setFontSize(16);
+  doc.text("Maju Terus Aircond Service", marginX, y);
+  y += 24;
+
+  doc.setFontSize(12);
+  doc.text(`Schedule for ${formatFullDate(dateObj)}`, marginX, y);
+  y += 16;
+  doc.text(`Assigned to: ${label}`, marginX, y);
+  y += 20;
+
+  doc.setDrawColor(200);
+  doc.line(marginX, y, marginX + textWidth, y);
+  y += 24;
+
+  doc.setFont("helvetica", "normal");
+  if (jobs.length === 0) {
+    doc.setFontSize(11);
+    doc.text("No jobs scheduled.", marginX, y);
+  } else {
+    jobs.forEach((job, index) => {
+      if (y > pageBottom) {
+        doc.addPage();
+        y = 50;
+      }
+      doc.setFont("helvetica", "bold");
+      doc.setFontSize(12);
+      doc.text(
+        `${index + 1}. ${job.jobTime || "No time set"} — ${job.customer.name}`,
+        marginX,
+        y
+      );
+      y += 16;
+
+      doc.setFont("helvetica", "normal");
+      doc.setFontSize(10.5);
+      doc.text(`Phone: ${job.customer.phone}`, marginX + 14, y);
+      y += 14;
+
+      const addressLines = doc.splitTextToSize(
+        `Address: ${job.customer.address}`,
+        textWidth
+      );
+      doc.text(addressLines, marginX + 14, y);
+      y += addressLines.length * 13;
+
+      if (job.description) {
+        const descLines = doc.splitTextToSize(
+          `Notes: ${job.description}`,
+          textWidth
+        );
+        doc.text(descLines, marginX + 14, y);
+        y += descLines.length * 13;
+      }
+      y += 14;
+    });
+  }
+
+  return { jobs, blob: doc.output("blob") };
 }
 
-async function copyTextToClipboard(text) {
-  if (navigator.clipboard && navigator.clipboard.writeText) {
-    await navigator.clipboard.writeText(text);
-    return;
-  }
-  const textarea = document.createElement("textarea");
-  textarea.value = text;
-  textarea.style.position = "fixed";
-  textarea.style.opacity = "0";
-  document.body.appendChild(textarea);
-  textarea.select();
-  document.execCommand("copy");
-  document.body.removeChild(textarea);
+function downloadBlob(blob, fileName) {
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = fileName;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
 function showToast(message) {
@@ -312,24 +359,23 @@ function showToast(message) {
 }
 
 async function shareDaySchedule(dateKey, assigneeId) {
-  const { jobs, text } = buildDaySchedulePlainText(dateKey, assigneeId);
-  if (jobs.length === 0) return;
   const label = getAssigneeLabel(assigneeId);
+  const { jobs, blob } = buildDaySchedulePdfBlob(dateKey, assigneeId);
+  if (jobs.length === 0) return;
 
-  if (navigator.share) {
+  const fileName = `Schedule-${dateKey}-${label.replace(/\s+/g, "-")}.pdf`;
+  const file = new File([blob], fileName, { type: "application/pdf" });
+
+  if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try {
-      await navigator.share({ title: `Schedule — ${label}`, text });
+      await navigator.share({ title: `Schedule — ${label}`, files: [file] });
       return;
     } catch (err) {
       if (err && err.name === "AbortError") return;
-      // fall through to clipboard fallback
+      // fall through to download fallback
     }
   }
 
-  try {
-    await copyTextToClipboard(text);
-    showToast(`${label}'s schedule copied to clipboard.`);
-  } catch {
-    showToast("Could not share or copy the schedule.");
-  }
+  downloadBlob(blob, fileName);
+  showToast(`${label}'s schedule PDF downloaded — share it from your files.`);
 }
