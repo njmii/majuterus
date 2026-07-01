@@ -1006,3 +1006,27 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+/* Backup page */
+
+.backup-grid {
+  margin-top: 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.backup-grid .day-panel-body {
+  gap: 0.75rem;
+}
+
+.backup-grid input[type="file"] {
+  padding: 0.4rem;
+}
+
+@media (max-width: 700px) {
+  .backup-grid {
+    grid-template-columns: 1fr;
+  }
+}

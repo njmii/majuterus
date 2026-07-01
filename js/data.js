@@ -379,3 +379,22 @@ async function shareDaySchedule(dateKey, assigneeId) {
   downloadBlob(blob, fileName);
   showToast(`${label}'s schedule PDF downloaded — share it from your files.`);
 }
+
+/* ---------- Backup (export/import all data as a JSON file) ---------- */
+
+function exportAllData() {
+  return {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    customers: loadCustomers(),
+    jobs: loadJobs(),
+  };
+}
+
+function importAllData(payload) {
+  if (!payload || !Array.isArray(payload.customers) || !Array.isArray(payload.jobs)) {
+    throw new Error("This file doesn't look like a Maju Terus backup.");
+  }
+  saveCustomers(payload.customers);
+  saveJobs(payload.jobs);
+}
