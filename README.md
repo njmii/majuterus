@@ -18,6 +18,11 @@ the browser and can be hosted for free with GitHub Pages.
   day (customer, phone, address, time, notes — no pricing) and shares it
   via the phone's native share sheet where available, or downloads it
   otherwise.
+- **Day View** (`day.html`): a bigger, clearer look at a single day, split
+  into one panel per assignee (In House / Sub Marvel / Sub Peter) side by
+  side — useful when a day has many jobs across different people and the
+  compact weekly columns get crowded. Jump to it from any day's "View
+  day →" link on the Schedule page.
 
 ## Data storage
 

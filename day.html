@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Schedule — Maju Terus Aircond Service</title>
+  <title>Day View — Maju Terus Aircond Service</title>
   <link rel="icon" href="assets/logo.jpg" />
   <link rel="stylesheet" href="css/style.css" />
 </head>
@@ -18,8 +18,8 @@
         </span>
       </a>
       <nav class="nav">
-        <a href="schedule.html" class="active">Schedule</a>
-        <a href="day.html">Day View</a>
+        <a href="schedule.html">Schedule</a>
+        <a href="day.html" class="active">Day View</a>
         <a href="customers.html">Customers</a>
       </nav>
     </div>
@@ -28,21 +28,20 @@
   <main class="container page">
     <div class="page-head">
       <div>
-        <h1>Schedule</h1>
+        <h1>Day View</h1>
         <p class="muted">
-          Drag a job card to move it to another day, or reorder within a day.
-          On touch devices without drag support, use Edit to change the date.
+          A bigger, clearer look at one day's job allocation, split by who's doing it.
         </p>
       </div>
       <div class="week-nav">
-        <button class="btn btn-secondary" id="prev-week-btn">&larr; Prev</button>
-        <button class="btn btn-secondary" id="this-week-btn">This week</button>
-        <button class="btn btn-secondary" id="next-week-btn">Next &rarr;</button>
+        <button class="btn btn-secondary" id="prev-day-btn">&larr; Prev day</button>
+        <button class="btn btn-secondary" id="today-btn">Today</button>
+        <button class="btn btn-secondary" id="next-day-btn">Next day &rarr;</button>
       </div>
     </div>
-    <p id="week-summary"></p>
+    <p id="day-summary" class="day-view-summary"></p>
 
-    <div class="board" id="board"></div>
+    <div class="day-view-grid" id="day-view-grid"></div>
   </main>
 
   <footer class="site-footer">
@@ -132,6 +131,6 @@
   <script src="js/vendor/jspdf.umd.min.js"></script>
   <script src="js/data.js"></script>
   <script src="js/job-modal.js"></script>
-  <script src="js/schedule.js"></script>
+  <script src="js/day.js"></script>
 </body>
 </html>
