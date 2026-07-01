@@ -12,6 +12,10 @@ the browser and can be hosted for free with GitHub Pages.
   customer with part cost, labor cost, discount, subtotal, and total
   automatically calculated. Drag a job card to another day, or reorder
   within a day, to rearrange the schedule — changes save automatically.
+- **Assignment**: each job is assigned to In House, Sub Marvel, or Sub
+  Peter. Every day column has a "Share" chip per assignee (showing their
+  job count for that day) that shares just their jobs — using the phone's
+  native share sheet where available, or copying the text otherwise.
 
 ## Data storage
 

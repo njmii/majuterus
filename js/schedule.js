@@ -46,6 +46,7 @@ function renderBoard() {
           <div class="day-header${isToday ? " is-today" : ""}">
             <p class="day-title">${formatDayLabel(d)}</p>
             <p class="day-meta">${dayJobs.length} job${dayJobs.length === 1 ? "" : "s"} · ${formatMoney(dayTotal)}</p>
+            ${renderShareRow(dateKey, dayJobs)}
           </div>
           <div class="day-body" data-date="${dateKey}">
             ${dayJobs.map(renderJobCard).join("")}
@@ -75,16 +76,45 @@ function renderBoard() {
       if (job) openDeleteConfirm(job);
     });
   });
+
+  board.querySelectorAll("[data-action='share-day']").forEach((btn) => {
+    if (btn.disabled) return;
+    btn.addEventListener("click", () => {
+      shareDaySchedule(btn.dataset.date, btn.dataset.assignee);
+    });
+  });
+}
+
+function renderShareRow(dateKey, dayJobs) {
+  const chips = ASSIGNEES.map((assignee) => {
+    const count = dayJobs.filter(
+      (j) => (j.assignedTo || "in_house") === assignee.id
+    ).length;
+    return `
+      <button
+        type="button"
+        class="share-chip"
+        data-action="share-day"
+        data-date="${dateKey}"
+        data-assignee="${assignee.id}"
+        ${count === 0 ? "disabled" : ""}
+        title="Share ${escapeHtml(assignee.label)}'s jobs for this day"
+      >${escapeHtml(assignee.label)} (${count})</button>
+    `;
+  }).join("");
+  return `<div class="day-share-row"><span class="share-label">Share:</span>${chips}</div>`;
 }
 
 function renderJobCard(job) {
   const customer = job.customer;
   if (!customer) return "";
+  const assignedTo = job.assignedTo || "in_house";
   return `
     <div class="job-card" draggable="true" data-job-id="${job.id}">
       <div class="job-card-top">
         <span class="job-drag-handle">&#10241;</span>
         <div>
+          <span class="assignee-badge assignee-${assignedTo}">${escapeHtml(getAssigneeLabel(assignedTo))}</span>
           <p class="job-card-name">${escapeHtml(customer.name)}</p>
           <p class="job-card-meta">${escapeHtml(customer.phone)}</p>
           <p class="job-card-meta">${escapeHtml(customer.address)}</p>
@@ -184,6 +214,10 @@ function openJobModal(date, job) {
   document.getElementById("job-date").value = job ? job.jobDate : date;
   document.getElementById("job-time").value = job && job.jobTime ? job.jobTime : "";
   document.getElementById("job-description").value = job ? job.description : "";
+  populateAssigneeSelect();
+  document.getElementById("job-assigned-to").value = job
+    ? job.assignedTo || "in_house"
+    : "in_house";
   document.getElementById("job-part-cost").value = job ? job.partCost : 0;
   document.getElementById("job-labor-cost").value = job ? job.laborCost : 0;
   document.getElementById("job-discount").value = job ? job.discount : 0;
@@ -194,6 +228,13 @@ function openJobModal(date, job) {
   renderCustomerPicker();
   updateJobTotals();
   document.getElementById("job-modal-backdrop").hidden = false;
+}
+
+function populateAssigneeSelect() {
+  const select = document.getElementById("job-assigned-to");
+  select.innerHTML = ASSIGNEES.map(
+    (a) => `<option value="${a.id}">${escapeHtml(a.label)}</option>`
+  ).join("");
 }
 
 function closeJobModal() {
@@ -348,6 +389,7 @@ function handleJobSubmit(event) {
     laborCost: labor,
     discount,
     status: document.getElementById("job-status").value,
+    assignedTo: document.getElementById("job-assigned-to").value,
   };
 
   if (editingJobId) {
