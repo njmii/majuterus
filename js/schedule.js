@@ -98,7 +98,7 @@ function renderShareRow(dateKey, dayJobs) {
         data-date="${dateKey}"
         data-assignee="${assignee.id}"
         ${count === 0 ? "disabled" : ""}
-        title="Share ${escapeHtml(assignee.label)}'s jobs for this day"
+        title="Share ${escapeHtml(assignee.label)}'s jobs for this day as a PDF"
       >${escapeHtml(assignee.label)} (${count})</button>
     `;
   }).join("");
