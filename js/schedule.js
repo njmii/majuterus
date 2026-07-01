@@ -113,12 +113,14 @@ function renderJobCard(job) {
     <div class="job-card" draggable="true" data-job-id="${job.id}">
       <div class="job-card-top">
         <span class="job-drag-handle">&#10241;</span>
-        <div>
-          <span class="assignee-badge assignee-${assignedTo}">${escapeHtml(getAssigneeLabel(assignedTo))}</span>
+        <div class="job-card-body">
+          <div class="job-card-header">
+            <span class="job-card-time">${job.jobTime ? escapeHtml(job.jobTime) : "No time set"}</span>
+            <span class="assignee-badge assignee-${assignedTo}">${escapeHtml(getAssigneeLabel(assignedTo))}</span>
+          </div>
           <p class="job-card-name">${escapeHtml(customer.name)}</p>
           <p class="job-card-meta">${escapeHtml(customer.phone)}</p>
           <p class="job-card-meta">${escapeHtml(customer.address)}</p>
-          ${job.jobTime ? `<p class="job-card-time">${escapeHtml(job.jobTime)}</p>` : ""}
           ${job.description ? `<p class="job-card-desc">${escapeHtml(job.description)}</p>` : ""}
           <dl class="job-costs">
             <dt>Parts</dt><dd class="value">${formatMoney(job.partCost)}</dd>
@@ -218,9 +220,9 @@ function openJobModal(date, job) {
   document.getElementById("job-assigned-to").value = job
     ? job.assignedTo || "in_house"
     : "in_house";
-  document.getElementById("job-part-cost").value = job ? job.partCost : 0;
-  document.getElementById("job-labor-cost").value = job ? job.laborCost : 0;
-  document.getElementById("job-discount").value = job ? job.discount : 0;
+  document.getElementById("job-part-cost").value = job && job.partCost ? job.partCost : "";
+  document.getElementById("job-labor-cost").value = job && job.laborCost ? job.laborCost : "";
+  document.getElementById("job-discount").value = job && job.discount ? job.discount : "";
   document.getElementById("job-status").value = job ? job.status : "scheduled";
   document.getElementById("job-status-field").hidden = !job;
   document.getElementById("job-error").hidden = true;
